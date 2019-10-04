@@ -1,7 +1,7 @@
 # Employee Attrition Analysis
 ## Problem Statement
 Employees are the backbone of any organization. An organization’s performance depends on the quality of employees and how they can retain them. Employee attrition can be for voluntary or involuntary reasons.
-The reasons are through natural means like retirement, or it can be through resignation, termination of contract. It costs precious time and money and can result in a loss of staff morale. This could also tarnish a Company's reputation.
+The reasons are through natural means like retirement, or it can be through resignation, termination of contract. It costs precious time and money and can result in a loss of staff morale. This could also tarnish a company's reputation.
 It is important for any organization to monitor their employee attrition rate and understand why employees are leaving if they want to avoid negative repercussions.
 
 Challenges faced by an Organization due to Employee Attrition:
