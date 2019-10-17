@@ -21,6 +21,8 @@ library(Amelia)
 library(grid)
 library(gridExtra)
 library(PerformanceAnalytics)
+library(stats)
+library(factoextra)
 ##Importing Data and inital analyses
 #Importing csv file from a location
 attr<- read.csv("C:/WD Jimit/MITA Spring 19/Ronak Parrikh/Multivariate Analysis/Dataset/HR-Employee-Attrition.csv")
@@ -181,7 +183,7 @@ plot(attr$Age, xlab = "")
 abline(h = mean(attr$Age, na.rm = T), lty = 1)
 abline(h = mean(attr$Age, na.rm = T) + sd(attr$Age, na.rm = T),lty = 2)
 abline(h = median(attr$Age, na.rm = T), lty = 3)
-identify(attr$Age)
+#identify(attr$Age)
 
 #Boxplot distributions for Daily rate
 boxplot(attr$DailyRate, ylab = "DailyRate",outline = TRUE)
@@ -192,7 +194,7 @@ plot(attr$DailyRate, xlab = "")
 abline(h = mean(attr$DailyRate, na.rm = T), lty = 1)
 abline(h = mean(attr$DailyRate, na.rm = T) + sd(attr$DailyRate, na.rm = T),lty = 2)
 abline(h = median(attr$DailyRate, na.rm = T), lty = 3)
-identify(attr$DailyRate)
+#identify(attr$DailyRate)
 
 #Boxplot distributions for Distance from home
 boxplot(attr$DistanceFromHome, ylab = "DistanceFromHome",outline = TRUE)
@@ -203,7 +205,7 @@ plot(attr$DistanceFromHome, xlab = "")
 abline(h = mean(attr$DistanceFromHome, na.rm = T), lty = 1)
 abline(h = mean(attr$DistanceFromHome, na.rm = T) + sd(attr$DistanceFromHome, na.rm = T),lty = 2)
 abline(h = median(attr$DistanceFromHome, na.rm = T), lty = 3)
-identify(attr$DistanceFromHome)
+#identify(attr$DistanceFromHome)
 
 #Boxplot distributions for Monthly Income
 boxplot(attr$MonthlyIncome, ylab = "Monthly Income")
@@ -214,7 +216,7 @@ plot(attr$MonthlyIncome, xlab = "")
 abline(h = mean(attr$MonthlyIncome, na.rm = T), lty = 1)
 abline(h = mean(attr$MonthlyIncome, na.rm = T) + sd(attr$MonthlyIncome, na.rm = T),lty = 2)
 abline(h = median(attr$MonthlyIncome, na.rm = T), lty = 3)
-identify(attr$MonthlyIncome)
+#identify(attr$MonthlyIncome)
 
 #Boxplot distributions for  NumCompaniesWorked
 boxplot(attr$NumCompaniesWorked, ylab = "NumCompaniesWorked")
@@ -225,7 +227,7 @@ plot(attr$NumCompaniesWorked, xlab = "")
 abline(h = mean(attr$NumCompaniesWorked, na.rm = T), lty = 1)
 abline(h = mean(attr$NumCompaniesWorked, na.rm = T) + sd(attr$NumCompaniesWorked, na.rm = T),lty = 2)
 abline(h = median(attr$NumCompaniesWorked, na.rm = T), lty = 3)
-identify(attr$NumCompaniesWorked)
+#identify(attr$NumCompaniesWorked)
 
 #Boxplot distributions for  PercentSalaryHike
 boxplot(attr$PercentSalaryHike, ylab = "PercentSalaryHike")
@@ -236,7 +238,7 @@ plot(attr$PercentSalaryHike, xlab = "")
 abline(h = mean(attr$PercentSalaryHike, na.rm = T), lty = 1)
 abline(h = mean(attr$PercentSalaryHike, na.rm = T) + sd(attr$PercentSalaryHike, na.rm = T),lty = 2)
 abline(h = median(attr$PercentSalaryHike, na.rm = T), lty = 3)
-identify(attr$PercentSalaryHike)
+#identify(attr$PercentSalaryHike)
 
 
 
@@ -249,7 +251,7 @@ plot(attr$TotalWorkingYears, xlab = "")
 abline(h = mean(attr$TotalWorkingYears, na.rm = T), lty = 1)
 abline(h = mean(attr$TotalWorkingYears, na.rm = T) + sd(attr$TotalWorkingYears, na.rm = T),lty = 2)
 abline(h = median(attr$TotalWorkingYears, na.rm = T), lty = 3)
-identify(attr$TotalWorkingYears)
+#identify(attr$TotalWorkingYears)
 
 #Boxplot distributions for  TrainingTimesLastYear
 boxplot(attr$TrainingTimesLastYear, ylab = "TrainingTimesLastYear")
@@ -260,7 +262,7 @@ plot(attr$TrainingTimesLastYear, xlab = "")
 abline(h = mean(attr$TrainingTimesLastYear, na.rm = T), lty = 1)
 abline(h = mean(attr$TrainingTimesLastYear, na.rm = T) + sd(attr$TrainingTimesLastYear, na.rm = T),lty = 2)
 abline(h = median(attr$TrainingTimesLastYear, na.rm = T), lty = 3)
-identify(attr$TrainingTimesLastYear)
+#identify(attr$TrainingTimesLastYear)
 
 #Boxplot distributions for  YearsAtCompany
 boxplot(attr$YearsAtCompany, ylab = "YearsAtCompany")
@@ -271,7 +273,7 @@ plot(attr$YearsAtCompany, xlab = "")
 abline(h = mean(attr$YearsAtCompany, na.rm = T), lty = 1)
 abline(h = mean(attr$YearsAtCompany, na.rm = T) + sd(attr$YearsAtCompany, na.rm = T),lty = 2)
 abline(h = median(attr$YearsAtCompany, na.rm = T), lty = 3)
-identify(attr$YearsAtCompany)
+#identify(attr$YearsAtCompany)
 
 #Boxplot distributions for  YearsInCurrentRole
 boxplot(attr$YearsInCurrentRole, ylab = "YearsInCurrentRole")
@@ -282,7 +284,7 @@ plot(attr$YearsInCurrentRole, xlab = "")
 abline(h = mean(attr$YearsInCurrentRole, na.rm = T), lty = 1)
 abline(h = mean(attr$YearsInCurrentRole, na.rm = T) + sd(attr$YearsInCurrentRole, na.rm = T),lty = 2)
 abline(h = median(attr$YearsInCurrentRole, na.rm = T), lty = 3)
-identify(attr$YearsInCurrentRole)
+#identify(attr$YearsInCurrentRole)
 
 #Boxplot distributions for  YearsSinceLastPromotion
 boxplot(attr$YearsSinceLastPromotion, ylab = "YearsSinceLastPromotion")
@@ -293,7 +295,7 @@ plot(attr$YearsSinceLastPromotion, xlab = "")
 abline(h = mean(attr$YearsSinceLastPromotion, na.rm = T), lty = 1)
 abline(h = mean(attr$YearsSinceLastPromotion, na.rm = T) + sd(attr$YearsSinceLastPromotion, na.rm = T),lty = 2)
 abline(h = median(attr$YearsSinceLastPromotion, na.rm = T), lty = 3)
-identify(attr$YearsSinceLastPromotion)
+#identify(attr$YearsSinceLastPromotion)
 
 #Boxplot distributions for  YearsWithCurrManager
 boxplot(attr$YearsWithCurrManager, ylab = "YearsWithCurrManager")
@@ -304,19 +306,19 @@ plot(attr$YearsWithCurrManager, xlab = "")
 abline(h = mean(attr$YearsWithCurrManager, na.rm = T), lty = 1)
 abline(h = mean(attr$YearsWithCurrManager, na.rm = T) + sd(attr$YearsWithCurrManager, na.rm = T),lty = 2)
 abline(h = median(attr$YearsWithCurrManager, na.rm = T), lty = 3)
-identify(attr$YearsWithCurrManager)
+#identify(attr$YearsWithCurrManager)
 
 #Chi Plot for inspecting the independence
 chi.plot(attr$MonthlyIncome,attr$Age)
 
-#Plotting joint boxplots for various categories wrt numerical column Monthly Income
+#Plotting joint boxplots for various categories wrt numerical column Age
 bwplot(attr$Department ~ attr$Age, data=attr, ylab='Department',xlab='Age')
 bwplot(attr$Gender ~ attr$Age, data=attr, ylab='Gender',xlab='Age')
 bwplot(attr$EducationField ~ attr$Age, data=attr, ylab='EducationField',xlab='Age')
 bwplot(attr$JobRole ~ attr$Age, data=attr, ylab='JobRole',xlab='Age')
 bwplot(attr$MaritalStatus ~ attr$MonthlyIncome, data=attr, ylab='MaritalStatus',xlab='Age')
 bwplot(attr$BusinessTravel ~ attr$Age, data=attr, ylab='BusinessTravel',xlab='Age')
-#Plotting stripplots for various categories wrt numerical column TotalCharges
+#Plotting stripplots for various categories wrt numerical column Age
 bwplot(attr$Department ~ attr$Age, data=attr,panel=panel.bpplot, 
        probs=seq(.01,.49,by=.01), datadensity=TRUE, ylab='Department',xlab='Age')
 bwplot(attr$Gender ~ attr$Age, data=attr,panel=panel.bpplot, 
@@ -430,4 +432,5 @@ print(t2testgender)
 t2testattr <- hotelling.test(attr$MonthlyIncome + attr$DistanceFromHome ~ attr$Attrition, data=attr)
 cat("T2 statistic =",t2testattr$stat[[1]],"\n")
 print(t2testattr)
+
 
