@@ -434,3 +434,35 @@ cat("T2 statistic =",t2testattr$stat[[1]],"\n")
 print(t2testattr)
 
 
+#PCA
+#plot.new(); dev.off()
+#Considering the numeric columns that will help to get variance in data
+attr_pca <- attr[,numvar]
+#Plotting correlation plot to understand the how feature are related to each other
+correplot<-cor(attr_pca)
+corrplot(correplot,method="circle")
+#Finding the principal components of data
+attr_pca <- prcomp(attr_pca,scale=TRUE)
+attr_pca
+names(attr_pca)
+head(attr_pca)
+summary(attr_pca)
+#Extract variance against features
+eigenvalues<-attr_pca$sdev^2
+eigenvalues
+sum(eigenvalues)
+names(eigenvalues) <- paste("PC",1:14,sep="")
+eigenvalues
+sumoflambdas <- sum(eigenvalues)
+sumoflambdas
+#Variance %
+pctvar<- (eigenvalues/sumoflambdas)*100
+pctvar
+#Calculate cumulative of variance
+cumvar <- cumsum(pctvar)
+cumvar
+#Visualize PCA using Scree plot
+fviz_screeplot(attr_pca, ncp=14)
+summary(attr_pca)
+
+
