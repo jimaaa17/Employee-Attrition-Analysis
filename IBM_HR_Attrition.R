@@ -447,6 +447,14 @@ attr_pca
 names(attr_pca)
 head(attr_pca)
 summary(attr_pca)
+ #We see that the first four components account for nearly 80% of the total variance.
+# sample scores stored in x_pca$x
+# singular values (square roots of eigenvalues) stored in x_pca$sdev
+# loadings (eigenvectors) are stored in x_pca$rotation
+# variable means stored in x_pca$center
+# variable standard deviations stored in x_pca$scale
+# A table containing eigenvalues and %'s accounted, follows
+# Eigenvalues are sdev^
 #Extract variance against features
 eigenvalues<-attr_pca$sdev^2
 eigenvalues
