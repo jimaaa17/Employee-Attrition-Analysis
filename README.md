@@ -31,7 +31,7 @@ Attrition|Employee leaving the company - (0=no,1=yes)
 Business Travel|Employee traveling level - (1=No Travel, 2=Travel Frequently, 3=Tavel Rarely)
 Daily Rate|Salary level of employee 
 Department|Department of Eployee - (1=HR, 2=R&D, 3=Sales)
-Distance From Home|THE distance from work to home
+Distance From Home|The distance from work to home
 Education|Employee's education level - (1= Below College, 2= College, 3= Bachelor, 4= Master, 5= Doctor)
 Education Field|Employee's field of Education - (1=HR, 2=LIFE SCIENCES, 3=MARKETING, 4=MEDICAL SCIENCES, 5=OTHERS, 6= TEHCNICAL)
 Employee Count|Count of Employee
