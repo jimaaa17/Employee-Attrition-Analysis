@@ -583,3 +583,108 @@ predict(attr_pca_done)[,2]
 out <- sapply(10:14, function(i){plot(attr$Attrition,attr_pca_done$x[,i],xlab=paste("PC",i,sep=""),ylab="Attrition")})
 out
 pairs(attr_pca_done$x[,10:14], ylim = c(-6,4),xlim = c(-6,4),panel=function(x,y,...){text(x,y,attr$Attrition)})
+#ClusTERING
+
+#K-Means Clustering 
+
+#We implemented non hierchal clustering because of more than 1000 samples
+
+attr_k <- read.csv("C:/Users/HP/Downloads/HR-Employee-Attrition.csv") 
+
+attach(attr_k) 
+
+# Standardizing the data with scale() 
+
+attr_std <- scale(attr_pca[,1:14]) 
+
+# K-means, k=2, 3, 4, 5, 6 
+
+# Centers (k's) are numbers thus, 10 random sets are chosen 
+
+
+
+(kmeans2_attr_std <- kmeans(attr_std,2,nstart = 10)) 
+
+# Computing the percentage of variation accounted for. Two clusters 
+
+perc.var.2 <- round(100*(1 - kmeans2_attr_std$betweenss/kmeans2_attr_std$totss),1) 
+
+names(perc.var.2) <- "Perc. 2 clus" 
+
+perc.var.2 
+
+
+
+# Computing the percentage of variation accounted for. Three clusters 
+
+(kmeans3_attr_std <- kmeans(attr_std,3,nstart = 10)) 
+
+perc.var.3 <- round(100*(1 - kmeans3_attr_std$betweenss/kmeans3_attr_std$totss),1) 
+
+names(perc.var.3) <- "Perc. 3 clus" 
+
+perc.var.3 
+
+
+
+# Computing the percentage of variation accounted for. Four clusters 
+
+(kmeans4_attr_std  <- kmeans(attr_std,4,nstart = 10)) 
+
+perc.var.4 <- round(100*(1 - kmeans4_attr_std$betweenss/kmeans4_attr_std$totss),1) 
+
+names(perc.var.4) <- "Perc. 4 clus" 
+
+perc.var.4 
+
+
+
+# Computing the percentage of variation accounted for. Five clusters 
+
+(kmeans5_attr_std  <- kmeans(attr_std,5,nstart = 10)) 
+
+perc.var.5 <- round(100*(1 - kmeans5_attr_std$betweenss/kmeans5_attr_std$totss),1) 
+
+names(perc.var.5) <- "Perc. 5 clus" 
+
+perc.var.5 
+
+(kmeans6_attr_std  <- kmeans(attr_std,6,nstart = 10)) 
+
+
+
+# Computing the percentage of variation accounted for. Six clusters 
+
+perc.var.6 <- round(100*(1 - kmeans6_attr_std$betweenss/kmeans6_attr_std$totss),1) 
+
+names(perc.var.6) <- "Perc. 6 clus" 
+
+perc.var.6 
+
+
+#Factor Analysis
+#parallel analysis suggest factor recommendation
+parallel<-fa.parallel(attr_pca[,1:14],fm='minres',fa='fa')
+#The gap between simulated data and actual data tends to be between 3 and 4 
+threefactor<-principal(attr_pca[,1:14],nfactors=3,rotate='varimax')
+print(threefactor)
+class(threefactor)
+#Display factor values 
+threefactor$values
+#Display factor loadings
+threefactor$loadings
+#communalities
+threefactor$communality
+#Rotated factor scores
+head(threefactor$scores)
+#round threefactor values
+round(threefactor$values,3)
+
+
+#Visualize the relationship and factor recommendations for simple structure
+
+fa.diagram(threefactor)
+
+colnames(threefactor$loadings)<- c("No.OfYears","PerformanceMetric","salaryMetric")
+colnames(threefactor$loadings)
+plot(threefactor)
