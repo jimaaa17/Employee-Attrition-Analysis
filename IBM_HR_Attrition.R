@@ -25,9 +25,14 @@ library(stats)
 library(factoextra)
 library(corrplot)
 library(devtools)
+library(data.table)
+install.packages("cluster", lib="/Library/Frameworks/R.framework/Versions/3.5/Resources/library") 
+
+library(cluster) 
+
 ##Importing Data and inital analyses
 #Importing csv file from a location
-attr<- read.csv("C:/WD Jimit/MITA Spring 19/Ronak Parrikh/Multivariate Analysis/Dataset/HR-Employee-Attrition.csv")
+attr<- read.csv("C:/Users/HP/Downloads/HR-Employee-Attrition.csv")
 attr <- as.data.frame(attr)
 glimpse(attr)
 
@@ -71,14 +76,14 @@ numvar<-c('Age','DailyRate','DistanceFromHome','HourlyRate',
 
 #Vizualization of Attrition
 attr %>%
-      group_by(Attrition) %>%
-      tally() %>%
-      ggplot(aes(x =Attrition,y = n,fill=Attrition)) +
-      geom_bar(stat = "identity") +
-      theme_minimal()+
-      labs(x="Attrition", y="Count of Attrition")+
-      ggtitle("Attrition")+
-      geom_text(aes(label = n), vjust = -0.5, position = position_dodge(0.9))
+  group_by(Attrition) %>%
+  tally() %>%
+  ggplot(aes(x =Attrition,y = n,fill=Attrition)) +
+  geom_bar(stat = "identity") +
+  theme_minimal()+
+  labs(x="Attrition", y="Count of Attrition")+
+  ggtitle("Attrition")+
+  geom_text(aes(label = n), vjust = -0.5, position = position_dodge(0.9))
 
 #Influence of features on Attrition
 ggplot(data=attr, aes(attr$Age)) + 
@@ -112,14 +117,14 @@ lines(density(attr$DistanceFromHome,na.rm = T))
 rug(jitter(attr$DistanceFromHome))
 qqPlot(attr$DistanceFromHome,main='Normal QQ plot of DistanceFromHome')
 par(mfrow=c(1,1))
-    
+
 par(mfrow = c(1,2))
 hist(attr$HourlyRate,xlab='',main = 'Histogram of HourlyRate',freq = FALSE)
 lines(density(attr$HourlyRate,na.rm = T))
 rug(jitter(attr$HourlyRate))
 qqPlot(attr$HourlyRate,main='Normal QQ plot of HourlyRate')
 par(mfrow=c(1,1))
-    
+
 par(mfrow = c(1,2))
 hist(attr$MonthlyIncome,xlab='',main = 'Histogram of Monthly Income',freq = FALSE)
 lines(density(attr$MonthlyIncome,na.rm = T))
@@ -127,9 +132,12 @@ rug(jitter(attr$MonthlyIncome))
 qqPlot(attr$MonthlyIncome,main='Normal QQ plot of Monthly Income')
 par(mfrow=c(1,1))
 
-
+# monthly_income_lm = lm(attr$MonthlyIncome~attr$Attrition,data= attr)
+# monthly_income_res = resid(monthly_income_lm)
+# monthly_income_res_dt=data.table('res'=monthly_income_res)
+# ggplot(monthly_income_res_dt,aes(x=res,y=attr$Attrition))+geom_point()
 par(mfrow = c(1,2))
-hist(attr$NumCompaniesWorked,xlab='',main = 'Histogram of NumCompaniesWorked',freq = FALSE)
+hist(attr,attr$NumCompaniesWorked,xlab='',main = 'Histogram of NumCompaniesWorked',freq = FALSE)
 lines(density(attr$NumCompaniesWorked,na.rm = T))
 rug(jitter(attr$NumCompaniesWorked))
 qqPlot(attr$NumCompaniesWorked,main='Normal QQ plot of NumCompaniesWorked')
@@ -323,7 +331,7 @@ abline(h = median(attr$YearsWithCurrManager, na.rm = T), lty = 3)
 
 #Chi Plot for inspecting the independence
 chi.plot(attr$MonthlyIncome,attr$Age)
-
+plot(qc<-qchisq((1:nrow(attr)-1/2)/nrow(attr),df=))
 #Plotting joint boxplots for various categories wrt numerical column Age
 bwplot(attr$Department ~ attr$Age, data=attr, ylab='Department',xlab='Age')
 bwplot(attr$Gender ~ attr$Age, data=attr, ylab='Gender',xlab='Age')
@@ -363,9 +371,9 @@ attr[numeric_col] <- sapply(attr[numeric_col], as.numeric)
 
 #Take out the numeric columns from categorical columns and storing them as a seperate dataframe
 attr_i <- attr[,c("Age","DailyRate","DistanceFromHome","HourlyRate",
-                    "MonthlyIncome","MonthlyRate","NumCompaniesWorked","PercentSalaryHike","TotalWorkingYears",
-                    "TrainingTimesLastYear","YearsAtCompany",
-                    "YearsInCurrentRole","YearsSinceLastPromotion","YearsWithCurrManager")]
+                  "MonthlyIncome","MonthlyRate","NumCompaniesWorked","PercentSalaryHike","TotalWorkingYears",
+                  "TrainingTimesLastYear","YearsAtCompany",
+                  "YearsInCurrentRole","YearsSinceLastPromotion","YearsWithCurrManager")]
 attr_i <- data.frame(scale(attr_i))
 
 #Creating temporary variables for the categorical data
@@ -458,12 +466,12 @@ pairs(attr_pca[,10:14],pch=".",cex=1.5)
 correplot<-cor(attr_pca)
 corrplot(correplot,method="circle")
 #Finding the principal components of data
-attr_pca_done <- prcomp(attr_pca,scale=TRUE)
+attr_pca_done <- princomp(attr_pca,scores = TRUE, cor = TRUE)
 attr_pca_done
 names(attr_pca_done)
 head(attr_pca_done)
 summary(attr_pca_done)
-  #Extract variance against features
+#Extract variance against features
 eigenvalues<-attr_pca_done$sdev^2
 eigenvalues
 sum(eigenvalues)
@@ -474,6 +482,7 @@ sumoflambdas
 #Variance %
 pctvar<- (eigenvalues/sumoflambdas)*100
 pctvar
+barplot(pctvar,main="scree plot",xlab="Principal Component",ylab="Percent Variation")
 #Calculate cumulative of variance
 cumvar <- cumsum(pctvar)
 cumvar
@@ -482,13 +491,24 @@ matlambdas
 
 rownames(matlambdas) <- c("Eigenvalues","Prop. variance","Cum. prop. variance")
 round(matlambdas,4)
-attr_pca_done$rotation
+
+
+#Loadings of principal Components
+loadings(attr_pca_done)
+attr_pca_done$loadings
+plot(attr_pca_done)
+eigenvec_attr<-attr_pca_done$rotation 
 #Visualize PCA using Scree plot
-fviz_screeplot(attr_pca_done, ncp=14)
+fviz_screeplot(attr_pca_done, type='bar',main='Scree plot')
 summary(attr_pca_done)
+#Biplot of score variables
+biplot(attr_pca_done)
+
+#Scores of the components
+attr_pca_done$scores[1:10,]
 
 
- 
+
 #Sample scores stored in attr_pca$x
 #We need to calculate the scores on each of these components for each individual in our sample. 
 attr_pca_done$x
@@ -501,8 +521,8 @@ str(typ_pca)
 
 
 
-  
-  #T-Test-- We see that true difference in all the means is different from zero.
+
+#T-Test-- We see that true difference in all the means is different from zero.
 t.test(PC1~attr$Attrition,data=typ_pca)
 t.test(PC2~attr$Attrition,data=typ_pca)
 t.test(PC3~attr$Attrition,data=typ_pca)
@@ -583,6 +603,26 @@ predict(attr_pca_done)[,2]
 out <- sapply(10:14, function(i){plot(attr$Attrition,attr_pca_done$x[,i],xlab=paste("PC",i,sep=""),ylab="Attrition")})
 out
 pairs(attr_pca_done$x[,10:14], ylim = c(-6,4),xlim = c(-6,4),panel=function(x,y,...){text(x,y,attr$Attrition)})
+# covariance<-cov(attr_pca)
+# cm<-colMeans(attr_pca)
+# cm
+# distance<-dist(scale(attr_pca,center=FALSE))
+# d<-apply(attr_pca,MARGIN = 1,function(attr_pca)+t(attr_pca-cm)%*%solve(covariance)%*%(attr_pca-cm))
+# plot(qc<-qchisq((1:nrow(attr_pca)-1/2)/nrow(attr_pca),df=14),sd<-sort(d),
+#               xlab=expression(paste(chi[14]^2,"Quantile")),ylab="Ordered distances")
+# oups<-which(rank(abs(qc-sd),ties="random")>nrow(attr_pca)-14)
+# text(qc[oups],sd[oups]-1.5,oups)
+# abline(a=0,b=1,col="orange")
+# attr_pca_new<-log(attr_pca[,numvar])
+# covariance<-cov(attr_pca_new)
+# correlation<-cor(attr_pca_new)
+# #colmeans
+# cm_log<-colMeans(attr_pca_new)
+# distance<-dist(scale,center=FALSE)
+# d<-apply(attr_pca_new,MARGIN=1,function(attr_pca_new)+t(attr_pca_new - cm_log)%*%
+#            solve(covariance)%*%(attr_pca_new - cm))
+# plot(qc<-qchisq(1:nrow(paste(attr_pca_new),df=14),sd<-sort(d))
+
 #ClusTERING
 
 #K-Means Clustering 
@@ -688,3 +728,4 @@ fa.diagram(threefactor)
 colnames(threefactor$loadings)<- c("No.OfYears","PerformanceMetric","salaryMetric")
 colnames(threefactor$loadings)
 plot(threefactor)
+
