@@ -885,12 +885,11 @@ attr <- as.data.frame(attr)
 summary(attr)
 glimpse(attr)
 
-#Checking if there are any NULL values in any of the columns
+#Checking if there are any NULL values in any of the columns  
 #table(is.na(attr))
 #str_detect(attr,'NA')
 
-##Checking relationships between our dependent variable and each of our independent categorical
-variable.
+##Checking relationships between our dependent variable and each of our independent categorical variable.
 xtabs(~Attrition+BusinessTravel,data=attr)
 xtabs(~Attrition+Department,data=attr)
 xtabs(~Attrition+Education,data=attr)
@@ -910,27 +909,21 @@ xtabs(~Attrition+WorkLifeBalance,data=attr)
 
 #attr$Attrition<-factor(attr$Attrition,levels = c(1 ,2),labels = c('No','Yes'))
 
-#By the above we can see that the independent variables Education and EducationFeild do not have
-much impact on the dependent variable-Attrition.
-#Hence, we will create 2 logistic models. One simple model, which will not include the independent
-variables Education and EducationFeild and
 
+#By the above we can see that the independent variables Education and EducationFeild do not have much impact on the dependent variable-Attrition.
+#Hence, we will create 2 logistic models. One simple model, which will not include the independent variables Education and EducationFeild and
 #The other model, which will include all independent variables
 attach(attr)
-logistic_simple <-
-glm(Attrition~BusinessTravel+Department+EnvironmentSatisfaction+Gender+JobInvolvement+JobLevel
-+JobRole+JobSatisfaction+MaritalStatus+OverTime+PerformanceRating+RelationshipSatisfaction+Stock
-OptionLevel+WorkLifeBalance, data=attr, family="binomial")
+logistic_simple <- glm(Attrition~BusinessTravel+Department+Education+EducationField+EnvironmentSatisfaction+Gender+JobInvolvement+JobLevel+JobRole+JobSatisfaction+MaritalStatus+OverTime+PerformanceRating+RelationshipSatisfaction+StockOptionLevel+WorkLifeBalance, data=attr, family="binomial")
 summary(logistic_simple)
 
-logistic <-
-glm(Attrition~BusinessTravel+Department+Education+EducationField+EnvironmentSatisfaction+Gender
-+JobInvolvement+JobLevel+JobRole+JobSatisfaction+MaritalStatus+OverTime+PerformanceRating+Rela
-tionshipSatisfaction+StockOptionLevel+WorkLifeBalance, data=attr, family="binomial")
+logistic <- glm(Attrition~Age+BusinessTravel+DailyRate+Department+DistanceFromHome+Education+EducationField+EnvironmentSatisfaction+Gender+HourlyRate+JobInvolvement+JobLevel+JobRole+JobSatisfaction+MaritalStatus+MonthlyIncome+MonthlyRate+NumCompaniesWorked+OverTime+PercentSalaryHike+PerformanceRating+RelationshipSatisfaction+StockOptionLevel+TotalWorkingYears+TrainingTimesLastYear+WorkLifeBalance+YearsAtCompany+YearsInCurrentRole+YearsSinceLastPromotion+YearsWithCurrManager, data=attr, family="binomial")
 summary(logistic)
+
 
 ll.null <- logistic$null.deviance/-2
 ll.proposed <- logistic$deviance/-2
+
 
 ## McFadden's Pseudo R^2 = [ LL(Null) - LL(Proposed) ] / LL(Null)
 (ll.null - ll.proposed) / ll.null
@@ -944,13 +937,11 @@ predicted.data <- predicted.data[order(predicted.data$probability.of.Attrition, 
 predicted.data$rank <- 1:nrow(predicted.data)
 ## Lastly, we can plot the predicted probabilities for each sample having
 ## Attriton and color by whether or not they would actually leave the company
-
-#ggplot(data=predicted.data,aes(x=rank, y=probability.of.Attrition)) +geom_point(aes(color=Attrition),
-alpha=1, shape=4, stroke=2) +xlab("Index") +ylab("Predicted probability of Attrition")
+#ggplot(data=predicted.data,aes(x=rank, y=probability.of.Attrition)) +geom_point(aes(color=Attrition), alpha=1, shape=4, stroke=2) +xlab("Index") +ylab("Predicted probability of Attrition")
 ggplot(data=predicted.data,aes(x=rank, y=probability.of.Attrition)) +
-geom_point(aes(color=Attrition), alpha=1, shape=4, stroke=2) +
-xlab("Index") +
-ylab("Predicted probability of Attrition")
+  geom_point(aes(color=Attrition), alpha=1, shape=4, stroke=2) +
+  xlab("Index") +
+  ylab("Predicted probability of Attrition")
 
 confusion_matrix(logistic)
 pdata <- predict(logistic,newdata=attr,type="response")
@@ -958,47 +949,66 @@ pdata
 
 attr$Attrition
 
-pdataF <- as.factor(ifelse(test=as.numeric(pdata>0.5) == 0, yes="Employee will Leave", no="Employee
-will not Leave"))
+pdataF <- as.factor(ifelse(test=as.numeric(pdata>0.5) == 0, yes="Employee will Leave", no="Employee will not Leave"))
 
 roc(attr$Attrition,logistic$fitted.values,plot=TRUE)
 par(pty='s')
 roc(attr$Attrition,logistic$fitted.values,plot=TRUE)
 roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE)
-roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage",
-ylab="True Postive Percentage")
-roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage",
-ylab="True Postive Percentage", col="#377eb8", lwd=4)
+roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage")
+roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4)
 ## If we want to find out the optimal threshold we can store the
 ## data used to make the ROC graph in a variable...
 roc.info <- roc(attr$Attrition, logistic$fitted.values, legacy.axes=TRUE)
 str(roc.info)
 roc.df <- data.frame(tpp=roc.info$sensitivities*100, ## tpp = true positive percentage
-fpp=(1 - roc.info$specificities)*100, ## fpp = false positive precentage
-
-thresholds=roc.info$thresholds)
+                     fpp=(1 - roc.info$specificities)*100, ## fpp = false positive precentage
+                     thresholds=roc.info$thresholds)
 roc.df
 
-roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage",
-ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE)
+roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE)
 
-roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage",
-ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE, print.auc=TRUE)
+roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE, print.auc=TRUE)
 
-roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage",
-ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE, print.auc=TRUE,
-partial.auc=c(100, 90), auc.polygon = TRUE, auc.polygon.col = "#377eb822", print.auc.x=45)
+roc(attr$Attrition,logistic$fitted.values,plot=TRUE, legacy.axes=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, percent=TRUE, print.auc=TRUE, partial.auc=c(100, 90), auc.polygon = TRUE, auc.polygon.col = "#377eb822", print.auc.x=45)
 
 # Lets do two roc plots to understand which model is better
-roc(attr$Attrition, logistic_simple$fitted.values, plot=TRUE, legacy.axes=TRUE, percent=TRUE,
-xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4,
-print.auc=TRUE)
+roc(attr$Attrition, logistic_simple$fitted.values, plot=TRUE, legacy.axes=TRUE, percent=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, print.auc=TRUE)
 
 # Lets add the other graph
-plot.roc(attr$Attrition, logistic$fitted.values, percent=TRUE, col="#4daf4a", lwd=4, print.auc=TRUE,
-add=TRUE, print.auc.y=40)
-legend("bottomright", legend=c("Simple", "Non Simple"), col=c("#377eb8", "#4daf4a"), lwd=4) # Make it
-user friendly
+plot.roc(attr$Attrition, logistic$fitted.values, percent=TRUE, col="#4daf4a", lwd=4, print.auc=TRUE, add=TRUE, print.auc.y=40)
+legend("bottomright", legend=c("Simple", "Non Simple"), col=c("#377eb8", "#4daf4a"), lwd=4) # Make it user friendly
 
 # reset the par area back to the default setting
 par(pty='m')
+
+
+##Multiple Discriminant Analysis
+library(ROCR)
+library(MASS)
+attr_mda <- attr
+dim(attr_mda)
+# Lets cut the data into two parts
+smp_size_raw <- floor(0.75 * nrow(attr_mda))
+train_ind_raw <- sample(nrow(attr_mda), size = smp_size_raw)
+train_raw.df <- as.data.frame(attr_mda[train_ind_raw, ])
+test_raw.df <- as.data.frame(attr_mda[-train_ind_raw, ])
+# We now have a training and a test set. Training is 75% and test is 25%
+attr_mda.lda <- lda(formula = train_raw.df$Attrition ~ ., data = train_raw.df)
+attr_mda.lda
+summary(attr_mda.lda)
+print(attr_mda.lda)
+plot(attr_mda.lda)
+attr_mda.lda.predict <- predict(attr_mda.lda, newdata = test_raw.df)
+attr_mda.lda.predict$class
+View(attr_mda.lda.predict)
+attr_mda.lda.predict$x
+# Get the posteriors as a dataframe.
+attr_mda.lda.predict.posteriors <- as.data.frame(attr_mda.lda.predict$posterior)#create ROC/AUC curve
+pred <- prediction(attr_mda.lda.predict.posteriors[,2], test_raw.df$Attrition)
+roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+auc.train <- performance(pred, measure = "auc")
+auc.train <- auc.train@y.values
+plot(roc.perf)
+abline(a=0, b= 1)
+text(x = .25, y = .65 ,paste("AUC = ", round(auc.train[[1]],3), sep = ""))
